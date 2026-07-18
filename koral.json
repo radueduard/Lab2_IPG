@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "name": "IPG_Lab2",
+  "color": [
+    0.87549996,
+    0.552,
+    0.5755
+  ],
+  "frameworkVersion": "0.0.4",
+  "kind": "Scene",
+  "rendering": {
+    "api": "Vulkan",
+    "window": {
+      "width": 1280,
+      "height": 720,
+      "resizable": true,
+      "fullscreen": false,
+      "borderless": false,
+      "transparent": false,
+      "vsync": true
+    }
+  },
+  "paths": {
+    "assetDirectories": [
+      "assets"
+    ],
+    "shaderDirectories": [
+      "shaders"
+    ]
+  },
+  "libraries": []
+}
