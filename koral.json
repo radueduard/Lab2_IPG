@@ -6,7 +6,7 @@
     0.552,
     0.5755
   ],
-  "frameworkVersion": "0.0.4",
+  "frameworkVersion": "0.0.5",
   "kind": "Scene",
   "rendering": {
     "api": "Vulkan",
