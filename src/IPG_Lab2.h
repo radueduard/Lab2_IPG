@@ -10,7 +10,7 @@ public:
     void Initialize() override;
     void Update() override;
     void Render(kor::CommandBuffer& commandBuffer) override;
-    void RenderUI(ImGuiContext* context) override;
+    void RenderUI() override;
 
     // Triangles are authored in this fixed canvas space rather than in window pixels, so
     // resizing the window scales the picture (the blit stretches it) instead of moving every

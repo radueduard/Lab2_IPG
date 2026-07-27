@@ -227,8 +227,6 @@ void IPG_Lab2::UploadMesh()
 
 void IPG_Lab2::Update()
 {
-    // Coalesced to once a frame: a drag in the properties panel reports a new value on every
-    // frame it moves, and each of those would otherwise be its own buffer write.
     if (meshDirty)
     {
         UploadMesh();
@@ -242,33 +240,19 @@ void IPG_Lab2::Render(kor::CommandBuffer& commandBuffer)
 
     commandBuffer
         .ClearColorImage(colorImage, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f))
-        // 1.0 is the far plane the shader's `depth < currentDepth` test starts from.
         .ClearColorImage(depthImage, glm::vec4(1.0f))
-        .Barrier({}, {
-            kor::ImageBarrier { colorImage, kor::ResourceAccess::ComputeWrite },
-            kor::ImageBarrier { depthImage, kor::ResourceAccess::ComputeWrite },
-        })
         .BindComputePipeline(pipeline)
         .BindDescriptorSet(0, descriptorSet)
         .ForEach(indices, [&](auto& cb, glm::uint i) {
             cb
                 .PushConstants(i)
-                .Dispatch(CANVAS_SIZE.x / 8, CANVAS_SIZE.y / 8)
-                // Triangles are rasterised one dispatch at a time and depth-test against each
-                // other through the image, so each has to see the previous one's writes.
-                .Barrier({}, {
-                    kor::ImageBarrier { colorImage, kor::ResourceAccess::ComputeReadWrite },
-                    kor::ImageBarrier { depthImage, kor::ResourceAccess::ComputeReadWrite },
-                });
+                .Dispatch(CANVAS_SIZE.x / 8, CANVAS_SIZE.y / 8);
         })
         .Blit(colorImage);
 }
 
-void IPG_Lab2::RenderUI(ImGuiContext* context)
+void IPG_Lab2::RenderUI()
 {
-    // Split the node the engine's dockspace put "Mesh" in, one frame after that node is known.
-    // Skipped entirely when "Properties" already has a dock id, so a layout restored from
-    // imgui.ini wins over this default.
     if (!dockLayoutBuilt && meshDockId != 0)
     {
         dockLayoutBuilt = true;
@@ -292,7 +276,6 @@ void IPG_Lab2::RenderUI(ImGuiContext* context)
     ImGui::Begin("Mesh");
     meshDockId = ImGui::GetWindowDockID();
 
-    // Rows carry their own spacing so the highlight rectangles above can be laid out by hand.
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { ImGui::GetStyle().ItemSpacing.x, ROW_SPACING });
 
     ImGui::SeparatorText("Vertices");
